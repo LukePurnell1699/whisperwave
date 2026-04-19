@@ -368,6 +368,25 @@ function setFilter(el) {
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
 }
+
+// Auth gate — clicking any creator card checks login first
+async function goToRoom(e, url) {
+  e.preventDefault();
+  const { data: { session } } = await _sb.auth.getSession();
+  if (session) {
+    window.location.href = url;
+  } else {
+    // Save where they were trying to go, then send to login
+    localStorage.setItem('ww_redirect', url);
+    window.location.href = 'login.html?next=' + encodeURIComponent(url);
+  }
+}
+
+// Attach click handler to all creator cards
+document.querySelectorAll('.creator-card').forEach(card => {
+  const href = card.getAttribute('href');
+  card.addEventListener('click', (e) => goToRoom(e, href));
+});
 </script>
 </body>
 </html>

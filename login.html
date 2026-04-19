@@ -129,9 +129,16 @@
   const SUPABASE_KEY = 'sb_publishable_vVXeAl-vesP5tYVvs3msHQ_68dKCQrp';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // If already logged in, redirect to browse
+  // Get redirect destination from URL or localStorage
+  const params = new URLSearchParams(window.location.search);
+  const redirectTo = params.get('next') || localStorage.getItem('ww_redirect') || 'browse.html';
+
+  // If already logged in, redirect immediately
   supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session) window.location.href = 'browse.html';
+    if (session) {
+      localStorage.removeItem('ww_redirect');
+      window.location.href = redirectTo;
+    }
   });
 
   function showTab(name, btn) {
@@ -185,8 +192,9 @@
     if (error) {
       showMsg(error.message, 'error');
     } else {
-      showMsg('Signed in! Taking you to WhisperWave…', 'success');
-      setTimeout(() => window.location.href = 'browse.html', 1200);
+      showMsg('Signed in! Taking you back…', 'success');
+      localStorage.removeItem('ww_redirect');
+      setTimeout(() => window.location.href = redirectTo, 1200);
     }
   }
 

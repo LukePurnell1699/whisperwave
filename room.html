@@ -420,7 +420,27 @@
   <div class="gift-flash-text" id="flashText">Soft Petal sent!</div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // Auth guard — redirect to login if not signed in
+  const _sbRoom = window.supabase.createClient('https://okcpubrjmsgmvlbyofdh.supabase.co','sb_publishable_vVXeAl-vesP5tYVvs3msHQ_68dKCQrp');
+  _sbRoom.auth.getSession().then(({ data: { session } }) => {
+    if (!session) {
+      localStorage.setItem('ww_redirect', 'room.html');
+      window.location.href = 'login.html?next=room.html';
+    } else {
+      // Show user's name in topbar
+      const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+      const tr = document.querySelector('.topbar-right');
+      if (tr) {
+        const acct = document.createElement('span');
+        acct.style.cssText = 'font-size:0.68rem;font-weight:300;color:rgba(245,239,230,0.4);letter-spacing:0.08em;';
+        acct.textContent = name;
+        tr.prepend(acct);
+      }
+    }
+  });
+
   let tokens = 850;
 
   // Build visualizer bars

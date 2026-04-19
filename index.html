@@ -210,6 +210,12 @@
     }
   });
   async function signOut() { await _sb.auth.signOut(); window.location.reload(); }
+  async function authGate(e, url) {
+    e.preventDefault();
+    const { data: { session } } = await _sb.auth.getSession();
+    if (session) { window.location.href = url; }
+    else { localStorage.setItem('ww_redirect', url); window.location.href = 'login.html?next=' + encodeURIComponent(url); }
+  }
 </script>
 
 <section class="hero">
@@ -252,7 +258,7 @@
       <div class="sound-chips">
         <span class="chip">Whisper</span><span class="chip">Ear Cupping</span><span class="chip">Page Turning</span><span class="chip">Tapping</span><span class="chip">Inaudible</span><span class="chip">Personal Attention</span>
       </div>
-      <a href="room.html" class="btn-primary">Join Session</a>
+      <a href="room.html" class="btn-primary" onclick="authGate(event,'room.html')">Join Session</a>
     </div>
   </div>
 </section>
