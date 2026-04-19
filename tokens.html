@@ -162,7 +162,7 @@
 
   <div class="packages-grid">
 
-    <div class="package" onclick="openCheckout('100 Tokens','$1.99','100','🌱')">
+    <div class="package" onclick="window.location.href='https://buy.stripe.com/test_dRmeVdc2jeQh5uBfBwcfK00'">
       <span class="pkg-icon">🌱</span>
       <span class="pkg-tokens">100</span>
       <span class="pkg-tokens-label">Tokens</span>
@@ -172,7 +172,7 @@
       <button class="pkg-btn">Select</button>
     </div>
 
-    <div class="package" onclick="openCheckout('550 Tokens','$4.99','550','🌿')">
+    <div class="package" onclick="window.location.href='https://buy.stripe.com/test_6oU5kDgiz23vg9fblgcfK01'">
       <span class="pkg-icon">🌿</span>
       <span class="pkg-tokens">550</span>
       <span class="pkg-tokens-label">Tokens</span>
@@ -182,7 +182,7 @@
       <button class="pkg-btn">Select</button>
     </div>
 
-    <div class="package featured" onclick="openCheckout('1,250 Tokens','$9.99','1250','✨')">
+    <div class="package featured" onclick="window.location.href='https://buy.stripe.com/test_bJedR93vNgYp9KRcpkcfK02'">
       <div class="best-value">Most Popular</div>
       <span class="pkg-icon">✨</span>
       <span class="pkg-tokens">1,250</span>
@@ -193,7 +193,7 @@
       <button class="pkg-btn">Select</button>
     </div>
 
-    <div class="package" onclick="openCheckout('6,500 Tokens','$39.99','6500','🔥')">
+    <div class="package" onclick="window.location.href='https://buy.stripe.com/test_aFaaEXfev4bDg9f4WScfK03'">
       <span class="pkg-icon">🔥</span>
       <span class="pkg-tokens">6,500</span>
       <span class="pkg-tokens-label">Tokens</span>
@@ -290,43 +290,6 @@
   <div class="footer-copy">© 2025 WhisperWave. All rights reserved.</div>
 </footer>
 
-<!-- CHECKOUT MODAL -->
-<div class="modal-overlay" id="checkoutModal" onclick="closeCheckout(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <h3>Complete your <em>purchase</em></h3>
-    <div class="modal-pkg-info">
-      <div>
-        <div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,239,230,0.35);margin-bottom:0.2rem;">You're getting</div>
-        <div class="tok" id="modalTokens">1,250 tokens</div>
-      </div>
-      <div class="price" id="modalPrice">$9.99</div>
-    </div>
-    <div class="form-group">
-      <label>Email address</label>
-      <input class="form-input" type="email" placeholder="you@example.com">
-    </div>
-    <div class="form-group">
-      <label>Card number</label>
-      <input class="form-input" type="text" placeholder="4242 4242 4242 4242" maxlength="19">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Expiry</label>
-        <input class="form-input" type="text" placeholder="MM / YY" maxlength="7">
-      </div>
-      <div class="form-group">
-        <label>CVC</label>
-        <input class="form-input" type="text" placeholder="123" maxlength="4">
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeCheckout()">Cancel</button>
-      <button class="btn-primary" onclick="completePurchase()">Pay <span id="modalPriceBtn">$9.99</span></button>
-    </div>
-    <div class="secure-note">🔒 Secured by Stripe · WhisperWave never stores your card</div>
-  </div>
-</div>
-
 <!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-icon">✨</div>
@@ -336,26 +299,11 @@
 </div>
 
 <script>
-  let selectedPkg = {};
-
-  function openCheckout(tokens, price, count, icon) {
-    selectedPkg = { tokens, price, count, icon };
-    document.getElementById('modalTokens').textContent = tokens;
-    document.getElementById('modalPrice').textContent = price;
-    document.getElementById('modalPriceBtn').textContent = price;
-    document.getElementById('checkoutModal').classList.add('show');
-  }
-
-  function closeCheckout(e) {
-    if (!e || e.target === document.getElementById('checkoutModal')) {
-      document.getElementById('checkoutModal').classList.remove('show');
-    }
-  }
-
-  function completePurchase() {
-    document.getElementById('checkoutModal').classList.remove('show');
-    document.getElementById('successSub').textContent = `${selectedPkg.tokens} have been added to your balance.`;
+  // Show success overlay when Stripe redirects back with ?success=true
+  if (new URLSearchParams(window.location.search).get('success') === 'true') {
     document.getElementById('successOverlay').classList.add('show');
+    // Clean the URL so a refresh doesn't re-trigger it
+    history.replaceState(null, '', window.location.pathname);
   }
 </script>
 </body>
