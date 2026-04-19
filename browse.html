@@ -120,18 +120,6 @@
     <a href="login.html" class="btn-nav-primary">Join Free</a>
   </div>
 </nav>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const _sb = window.supabase.createClient('https://okcpubrjmsgmvlbyofdh.supabase.co','sb_publishable_vVXeAl-vesP5tYVvs3msHQ_68dKCQrp');
-  _sb.auth.getSession().then(({ data: { session } }) => {
-    const nr = document.getElementById('navRight');
-    if (session) {
-      const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
-      nr.innerHTML = `<a href="tokens.html" class="token-display"><span class="token-icon">◈</span> Tokens</a><span style="font-size:0.72rem;font-weight:300;color:rgba(245,239,230,0.55);letter-spacing:0.1em;">Hi, ${name}</span><a href="#" onclick="signOut()" class="btn-nav-ghost">Sign Out</a><a href="become-creator.html" class="btn-nav-primary">Go Live</a>`;
-    }
-  });
-  async function signOut() { await _sb.auth.signOut(); window.location.reload(); }
-</script>
 
 <div class="browse-header">
   <div class="live-total"><span class="live-dot"></span>47 creators live now · 28,400 listening</div>
@@ -363,30 +351,48 @@
   <div class="footer-copy">© 2025 WhisperWave. All rights reserved.</div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-function setFilter(el) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
+  const _sbBrowse = window.supabase.createClient(
+    'https://okcpubrjmsgmvlbyofdh.supabase.co',
+    'sb_publishable_vVXeAl-vesP5tYVvs3msHQ_68dKCQrp'
+  );
 
-// Auth gate — clicking any creator card checks login first
-async function goToRoom(e, url) {
-  e.preventDefault();
-  const { data: { session } } = await _sb.auth.getSession();
-  if (session) {
-    window.location.href = url;
-  } else {
-    // Save where they were trying to go, then send to login
-    localStorage.setItem('ww_redirect', url);
-    window.location.href = 'login.html?next=' + encodeURIComponent(url);
+  function setFilter(el) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
   }
-}
 
-// Attach click handler to all creator cards
-document.querySelectorAll('.creator-card').forEach(card => {
-  const href = card.getAttribute('href');
-  card.addEventListener('click', (e) => goToRoom(e, href));
-});
+  // Auth gate — called on every creator card click
+  async function goToRoom(e, url) {
+    e.preventDefault();
+    e.stopPropagation();
+    const { data: { session } } = await _sbBrowse.auth.getSession();
+    if (session) {
+      window.location.href = url;
+    } else {
+      localStorage.setItem('ww_redirect', url);
+      window.location.href = 'login.html?next=' + encodeURIComponent(url);
+    }
+  }
+
+  // Update nav based on auth state
+  _sbBrowse.auth.getSession().then(({ data: { session } }) => {
+    const nr = document.getElementById('navRight');
+    if (nr && session) {
+      const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+      nr.innerHTML = `<a href="tokens.html" class="token-display"><span class="token-icon">◈</span> Tokens</a><span style="font-size:0.72rem;font-weight:300;color:rgba(245,239,230,0.55);letter-spacing:0.1em;">Hi, ${name}</span><a href="#" onclick="doSignOut()" class="btn-nav-ghost">Sign Out</a><a href="become-creator.html" class="btn-nav-primary">Go Live</a>`;
+    }
+  });
+  async function doSignOut() { await _sbBrowse.auth.signOut(); window.location.reload(); }
+
+  // Wire up all creator cards after DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.creator-card').forEach(card => {
+      const href = card.getAttribute('href');
+      card.addEventListener('click', (e) => goToRoom(e, href));
+    });
+  });
 </script>
 </body>
 </html>
