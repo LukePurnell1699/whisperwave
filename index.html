@@ -194,11 +194,23 @@
     <li><a href="browse.html">Categories</a></li>
     <li><a href="browse.html">Creators</a></li>
   </ul>
-  <div class="nav-right">
-    <a href="#" class="btn-nav-ghost">Sign In</a>
-    <a href="browse.html" class="btn-nav-primary">Start Listening</a>
+  <div class="nav-right" id="navRight">
+    <a href="login.html" class="btn-nav-ghost">Sign In</a>
+    <a href="login.html" class="btn-nav-primary">Start Listening</a>
   </div>
 </nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const _sb = window.supabase.createClient('https://okcpubrjmsgmvlbyofdh.supabase.co','sb_publishable_vVXeAl-vesP5tYVvs3msHQ_68dKCQrp');
+  _sb.auth.getSession().then(({ data: { session } }) => {
+    const nr = document.getElementById('navRight');
+    if (session) {
+      const name = session.user.user_metadata?.full_name || session.user.email.split('@')[0];
+      nr.innerHTML = `<span style="font-size:0.72rem;font-weight:300;color:rgba(245,239,230,0.55);letter-spacing:0.1em;">Hi, ${name}</span><a href="browse.html" class="btn-nav-primary">Browse Live</a><a href="#" onclick="signOut()" class="btn-nav-ghost">Sign Out</a>`;
+    }
+  });
+  async function signOut() { await _sb.auth.signOut(); window.location.reload(); }
+</script>
 
 <section class="hero">
   <div class="live-badge"><span class="live-dot"></span>Live now · 14,200 listening</div>
