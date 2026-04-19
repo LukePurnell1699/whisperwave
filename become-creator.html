@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Become a Creator — WhisperWave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #f5efe6; --blush: #e8c9b0; --amber: #c8894a; --ember: #9b5a2a;
+    --velvet: #1a0f0a; --smoke: #2e1c14;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Jost', sans-serif; background: var(--velvet); color: var(--cream); min-height: 100vh; overflow-x: hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.4; }
+  body::after { content:''; position:fixed; width:900px; height:900px; background:radial-gradient(ellipse, rgba(155,90,42,0.15) 0%, transparent 70%); top:-200px; left:50%; transform:translateX(-50%); pointer-events:none; z-index:0; animation:breathe 8s ease-in-out infinite; }
+  @keyframes breathe { 0%,100%{opacity:0.6;transform:translateX(-50%) scale(1)} 50%{opacity:1;transform:translateX(-50%) scale(1.08)} }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1.4rem 3rem; background:linear-gradient(to bottom,rgba(26,15,10,0.98) 0%,transparent 100%); backdrop-filter:blur(4px); }
+  .logo { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.4rem; letter-spacing:0.12em; color:var(--cream); text-decoration:none; }
+  .logo span { color:var(--amber); font-style:italic; }
+  .nav-center { display:flex; gap:2.5rem; list-style:none; }
+  .nav-center a { font-weight:200; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(245,239,230,0.55); text-decoration:none; transition:color 0.3s; }
+  .nav-center a:hover { color:var(--cream); }
+  .nav-right { display:flex; gap:1rem; align-items:center; }
+  .btn-nav-ghost { font-size:0.72rem; font-weight:300; letter-spacing:0.15em; text-transform:uppercase; color:rgba(245,239,230,0.55); text-decoration:none; transition:color 0.3s; }
+  .btn-nav-ghost:hover { color:var(--cream); }
+  .btn-nav-primary { font-size:0.72rem; font-weight:300; letter-spacing:0.15em; text-transform:uppercase; color:var(--velvet); background:var(--amber); border:none; padding:0.55rem 1.5rem; border-radius:3rem; cursor:pointer; text-decoration:none; transition:all 0.3s; }
+  .btn-nav-primary:hover { background:var(--blush); }
+
+  /* HERO */
+  .creator-hero { position:relative; z-index:1; padding:10rem 2rem 6rem; text-align:center; max-width:900px; margin:0 auto; }
+  .section-label { font-size:0.64rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--amber); margin-bottom:1rem; }
+  .creator-hero h1 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(3rem,7vw,6rem); line-height:1.05; color:var(--cream); margin-bottom:1.5rem; }
+  .creator-hero h1 em { font-style:italic; color:var(--blush); display:block; }
+  .creator-hero p { font-weight:200; font-size:1rem; line-height:1.9; color:rgba(245,239,230,0.5); max-width:50ch; margin:0 auto 3rem; }
+  .hero-stats { display:flex; justify-content:center; gap:4rem; margin-bottom:4rem; }
+  .hero-stat { text-align:center; }
+  .hero-stat-num { font-family:'Cormorant Garamond',serif; font-size:2.5rem; font-weight:300; color:var(--cream); display:block; }
+  .hero-stat-label { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(245,239,230,0.3); margin-top:0.2rem; }
+  .divider { width:60px; height:1px; background:linear-gradient(to right, transparent, var(--amber), transparent); margin:2rem auto; }
+
+  /* EARNINGS */
+  .earnings-section { position:relative; z-index:1; padding:4rem 2rem; max-width:1100px; margin:0 auto; }
+  .earnings-inner { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
+  .earnings-content h2 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2rem,4vw,3rem); color:var(--cream); margin-bottom:1rem; }
+  .earnings-content h2 em { font-style:italic; color:var(--blush); }
+  .earnings-content p { font-size:0.88rem; font-weight:200; line-height:1.9; color:rgba(245,239,230,0.45); margin-bottom:2rem; }
+  .earnings-breakdown { display:flex; flex-direction:column; gap:0.8rem; }
+  .earnings-row { display:flex; align-items:center; justify-content:space-between; padding:0.9rem 1.2rem; border:1px solid rgba(245,239,230,0.06); border-radius:4px; background:rgba(245,239,230,0.015); }
+  .earnings-row-label { font-size:0.75rem; font-weight:200; color:rgba(245,239,230,0.55); display:flex; align-items:center; gap:0.6rem; }
+  .earnings-row-pct { font-size:0.88rem; font-weight:300; color:var(--amber); }
+  .earnings-visual { background:radial-gradient(ellipse at 40% 35%, rgba(155,90,42,0.2) 0%, transparent 60%), linear-gradient(180deg, #2a1509 0%, #180c06 100%); border-radius:6px; padding:3rem 2.5rem; border:1px solid rgba(245,239,230,0.06); }
+  .earnings-visual h3 { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:300; color:var(--cream); margin-bottom:0.4rem; }
+  .earnings-visual p { font-size:0.76rem; font-weight:200; color:rgba(245,239,230,0.35); margin-bottom:2rem; line-height:1.7; }
+  .payout-example { margin-bottom:1.5rem; }
+  .payout-bar-wrap { background:rgba(245,239,230,0.04); border-radius:3px; height:8px; margin-bottom:0.4rem; overflow:hidden; }
+  .payout-bar { height:100%; border-radius:3px; background:linear-gradient(to right, var(--ember), var(--amber)); animation:barGrow 1.5s ease-out forwards; transform-origin:left; }
+  @keyframes barGrow { from{width:0} }
+  .payout-meta { display:flex; justify-content:space-between; font-size:0.65rem; color:rgba(245,239,230,0.3); }
+  .payout-total { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--amber); margin-top:1rem; }
+  .payout-total-label { font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(245,239,230,0.25); }
+
+  /* PERKS */
+  .perks-section { position:relative; z-index:1; padding:4rem 2rem 6rem; max-width:1100px; margin:0 auto; }
+  .perks-header { text-align:center; margin-bottom:3.5rem; }
+  .perks-header h2 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2rem,4vw,3rem); color:var(--cream); }
+  .perks-header h2 em { font-style:italic; color:var(--blush); }
+  .perks-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+  .perk { border-top:1px solid rgba(200,137,74,0.2); padding-top:1.8rem; }
+  .perk-icon { font-size:1.6rem; display:block; margin-bottom:0.9rem; }
+  .perk h3 { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:300; color:var(--cream); margin-bottom:0.6rem; }
+  .perk p { font-size:0.78rem; font-weight:200; line-height:1.85; color:rgba(245,239,230,0.38); }
+
+  /* STEPS */
+  .steps-section { position:relative; z-index:1; padding:4rem 2rem 6rem; max-width:800px; margin:0 auto; text-align:center; }
+  .steps-section h2 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2rem,4vw,3rem); color:var(--cream); margin-bottom:3rem; }
+  .steps-section h2 em { font-style:italic; color:var(--blush); }
+  .steps-list { display:flex; flex-direction:column; gap:0; text-align:left; }
+  .step-item { display:grid; grid-template-columns:60px 1fr; gap:1.5rem; align-items:start; padding:1.8rem 0; border-bottom:1px solid rgba(245,239,230,0.05); }
+  .step-item:last-child { border-bottom:none; }
+  .step-num-big { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:rgba(200,137,74,0.2); line-height:1; text-align:center; }
+  .step-body h4 { font-size:0.88rem; font-weight:300; color:var(--cream); margin-bottom:0.4rem; letter-spacing:0.04em; }
+  .step-body p { font-size:0.78rem; font-weight:200; line-height:1.8; color:rgba(245,239,230,0.38); }
+
+  /* APPLICATION FORM */
+  .apply-section { position:relative; z-index:1; padding:4rem 2rem 8rem; max-width:680px; margin:0 auto; }
+  .apply-section h2 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2rem,4vw,3rem); color:var(--cream); margin-bottom:0.5rem; text-align:center; }
+  .apply-section h2 em { font-style:italic; color:var(--blush); }
+  .apply-section > p { font-size:0.85rem; font-weight:200; color:rgba(245,239,230,0.4); text-align:center; margin-bottom:3rem; line-height:1.8; }
+  .apply-form { background:rgba(46,28,20,0.4); border:1px solid rgba(245,239,230,0.07); border-radius:8px; padding:3rem; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+  .form-group { margin-bottom:1.5rem; }
+  .form-group label { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(245,239,230,0.35); display:block; margin-bottom:0.55rem; }
+  .form-input { width:100%; background:rgba(245,239,230,0.04); border:1px solid rgba(245,239,230,0.09); border-radius:4px; padding:0.75rem 1rem; font-family:'Jost',sans-serif; font-size:0.82rem; font-weight:200; color:var(--cream); outline:none; transition:border-color 0.25s; }
+  .form-input::placeholder { color:rgba(245,239,230,0.2); }
+  .form-input:focus { border-color:rgba(200,137,74,0.4); }
+  .form-select { width:100%; background:rgba(245,239,230,0.04); border:1px solid rgba(245,239,230,0.09); border-radius:4px; padding:0.75rem 1rem; font-family:'Jost',sans-serif; font-size:0.82rem; font-weight:200; color:var(--cream); outline:none; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(245,239,230,0.3)' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center; cursor:pointer; transition:border-color 0.25s; }
+  .form-select:focus { border-color:rgba(200,137,74,0.4); }
+  .form-select option { background:var(--smoke); color:var(--cream); }
+  .form-textarea { width:100%; background:rgba(245,239,230,0.04); border:1px solid rgba(245,239,230,0.09); border-radius:4px; padding:0.75rem 1rem; font-family:'Jost',sans-serif; font-size:0.82rem; font-weight:200; color:var(--cream); outline:none; resize:vertical; min-height:100px; line-height:1.7; transition:border-color 0.25s; }
+  .form-textarea::placeholder { color:rgba(245,239,230,0.2); }
+  .form-textarea:focus { border-color:rgba(200,137,74,0.4); }
+  .tags-select { display:flex; flex-wrap:wrap; gap:0.5rem; }
+  .tag-opt { font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,239,230,0.4); border:1px solid rgba(245,239,230,0.1); padding:0.35rem 0.85rem; border-radius:2rem; cursor:pointer; transition:all 0.25s; user-select:none; }
+  .tag-opt.selected { border-color:rgba(200,137,74,0.5); color:var(--blush); background:rgba(200,137,74,0.08); }
+  .form-submit { width:100%; background:var(--amber); color:var(--velvet); font-family:'Jost',sans-serif; font-size:0.82rem; font-weight:400; letter-spacing:0.22em; text-transform:uppercase; border:none; padding:1.1rem; border-radius:3rem; cursor:pointer; transition:all 0.4s; margin-top:0.5rem; }
+  .form-submit:hover { background:var(--blush); transform:translateY(-2px); box-shadow:0 12px 40px rgba(200,137,74,0.3); }
+  .form-note { font-size:0.66rem; color:rgba(245,239,230,0.22); text-align:center; margin-top:1rem; line-height:1.7; }
+
+  /* TESTIMONIALS */
+  .creator-quotes { position:relative; z-index:1; padding:4rem 2rem; max-width:960px; margin:0 auto; }
+  .creator-quotes h2 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.8rem; color:var(--cream); margin-bottom:2.5rem; text-align:center; }
+  .quotes-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; }
+  .quote-card { padding:1.8rem; border:1px solid rgba(245,239,230,0.06); border-radius:4px; background:rgba(46,28,20,0.3); }
+  .quote-text { font-family:'Cormorant Garamond',serif; font-size:1rem; font-style:italic; font-weight:300; line-height:1.8; color:rgba(245,239,230,0.65); margin-bottom:1.2rem; }
+  .quote-author { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); opacity:0.7; }
+  .quote-earnings { font-size:0.72rem; color:rgba(245,239,230,0.3); margin-top:0.3rem; }
+
+  /* SUCCESS */
+  .success-overlay { position:fixed; inset:0; background:rgba(10,5,3,0.92); backdrop-filter:blur(10px); z-index:300; display:none; align-items:center; justify-content:center; flex-direction:column; text-align:center; gap:1.2rem; padding:2rem; }
+  .success-overlay.show { display:flex; animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .success-icon { font-size:4rem; animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+  .success-title { font-family:'Cormorant Garamond',serif; font-size:2.5rem; font-weight:300; color:var(--cream); }
+  .success-title em { font-style:italic; color:var(--blush); }
+  .success-sub { font-size:0.88rem; font-weight:200; color:rgba(245,239,230,0.45); max-width:40ch; line-height:1.8; }
+
+  footer { border-top:1px solid rgba(245,239,230,0.06); padding:3rem 2rem; text-align:center; position:relative; z-index:1; }
+  .footer-logo { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:300; color:rgba(245,239,230,0.28); letter-spacing:0.15em; margin-bottom:1rem; }
+  .footer-links { display:flex; gap:2rem; justify-content:center; list-style:none; margin-bottom:2rem; }
+  .footer-links a { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(245,239,230,0.22); text-decoration:none; transition:color 0.3s; }
+  .footer-links a:hover { color:rgba(245,239,230,0.5); }
+  .footer-copy { font-size:0.63rem; letter-spacing:0.1em; color:rgba(245,239,230,0.16); }
+  ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--velvet)} ::-webkit-scrollbar-thumb{background:rgba(200,137,74,0.3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Whisper<span>Wave</span></a>
+  <ul class="nav-center">
+    <li><a href="browse.html">Browse</a></li>
+    <li><a href="browse.html">Live Now</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#apply" class="btn-nav-primary">Apply Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="creator-hero">
+  <div class="section-label">Creator Programme</div>
+  <h1>Your voice is<br><em>worth something.</em></h1>
+  <p>Join hundreds of creators who've turned their gift for presence, calm, and intimacy into a living — on their own schedule, on their own terms.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-num">$4,200</span>
+      <span class="hero-stat-label">Avg. monthly earnings</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">70%</span>
+      <span class="hero-stat-label">Creator revenue share</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">280k</span>
+      <span class="hero-stat-label">Active listeners</span>
+    </div>
+  </div>
+  <div class="divider"></div>
+</div>
+
+<!-- EARNINGS -->
+<div class="earnings-section">
+  <div class="earnings-inner">
+    <div class="earnings-content">
+      <div class="section-label">Revenue Model</div>
+      <h2>Earn every way<br><em>you create</em></h2>
+      <p>WhisperWave passes 70% of all token revenue directly to you. Gifts, interactions, private sessions — every token listeners spend in your room is yours to keep (minus platform and payment fees).</p>
+      <div class="earnings-breakdown">
+        <div class="earnings-row">
+          <span class="earnings-row-label">🎁 Gifts received</span>
+          <span class="earnings-row-pct">70%</span>
+        </div>
+        <div class="earnings-row">
+          <span class="earnings-row-label">✨ Interaction requests</span>
+          <span class="earnings-row-pct">70%</span>
+        </div>
+        <div class="earnings-row">
+          <span class="earnings-row-label">🔒 Private sessions</span>
+          <span class="earnings-row-pct">70%</span>
+        </div>
+        <div class="earnings-row">
+          <span class="earnings-row-label">💬 Tip messages</span>
+          <span class="earnings-row-pct">70%</span>
+        </div>
+      </div>
+    </div>
+    <div class="earnings-visual">
+      <h3>Example payout</h3>
+      <p>A 3-hour session with 800 average viewers</p>
+
+      <div class="payout-example">
+        <div class="payout-bar-wrap"><div class="payout-bar" style="width:88%"></div></div>
+        <div class="payout-meta"><span>Gifts</span><span>$62.40</span></div>
+      </div>
+      <div class="payout-example">
+        <div class="payout-bar-wrap"><div class="payout-bar" style="width:52%"></div></div>
+        <div class="payout-meta"><span>Interactions</span><span>$36.80</span></div>
+      </div>
+      <div class="payout-example">
+        <div class="payout-bar-wrap"><div class="payout-bar" style="width:35%"></div></div>
+        <div class="payout-meta"><span>Private session</span><span>$24.50</span></div>
+      </div>
+      <div class="payout-example">
+        <div class="payout-bar-wrap"><div class="payout-bar" style="width:20%"></div></div>
+        <div class="payout-meta"><span>Tips</span><span>$14.00</span></div>
+      </div>
+
+      <div class="payout-total">$137.70</div>
+      <div class="payout-total-label">from one session</div>
+    </div>
+  </div>
+</div>
+
+<!-- PERKS -->
+<div class="perks-section">
+  <div class="perks-header">
+    <div class="section-label">What you get</div>
+    <h2>Built for <em>creators</em></h2>
+  </div>
+  <div class="perks-grid">
+    <div class="perk">
+      <span class="perk-icon">🎙</span>
+      <h3>Professional Studio Tools</h3>
+      <p>Noise reduction, binaural mixing, and real-time audio enhancement built right into your stream — no expensive gear required.</p>
+    </div>
+    <div class="perk">
+      <span class="perk-icon">📅</span>
+      <h3>Your Schedule, Always</h3>
+      <p>Go live whenever you want. Set your own hours, schedule sessions in advance, or surprise your followers spontaneously.</p>
+    </div>
+    <div class="perk">
+      <span class="perk-icon">💰</span>
+      <h3>Weekly Payouts</h3>
+      <p>Earnings hit your account every Friday, with full transparency on what came from where. Bank transfer, PayPal, or Stripe.</p>
+    </div>
+    <div class="perk">
+      <span class="perk-icon">🔒</span>
+      <h3>You Control Your Room</h3>
+      <p>Set interaction prices, block users, moderate chat with AI tools, and decide exactly what requests you accept.</p>
+    </div>
+    <div class="perk">
+      <span class="perk-icon">📈</span>
+      <h3>Creator Analytics</h3>
+      <p>Deep insights into your listeners — peak times, top gifters, retention curves — so you can grow intentionally.</p>
+    </div>
+    <div class="perk">
+      <span class="perk-icon">🌙</span>
+      <h3>Creator Community</h3>
+      <p>Private Discord, monthly creator calls, mentorship from top earners. You're never figuring this out alone.</p>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO START -->
+<div class="steps-section">
+  <div class="section-label">Getting Started</div>
+  <h2>Live in <em>minutes</em></h2>
+  <div class="steps-list">
+    <div class="step-item">
+      <div class="step-num-big">01</div>
+      <div class="step-body">
+        <h4>Apply below</h4>
+        <p>Fill in the short form — we just want to understand your voice, your style, and what you'd bring to the platform. No audition required.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num-big">02</div>
+      <div class="step-body">
+        <h4>Get approved (usually under 24 hours)</h4>
+        <p>Our team reviews every application personally. Most creators hear back within a day, often within hours.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num-big">03</div>
+      <div class="step-body">
+        <h4>Set up your room</h4>
+        <p>Choose your creator name, set your interaction prices, connect your payout method, and customise your room's look and feel.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num-big">04</div>
+      <div class="step-body">
+        <h4>Go live</h4>
+        <p>Hit the broadcast button from any browser or our desktop app. Listeners can discover you instantly through the Browse page. Your first gift could come within minutes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATOR QUOTES -->
+<div class="creator-quotes">
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;">What <em style="font-style:italic;color:var(--blush);">creators say</em></h2>
+  <div class="quotes-grid">
+    <div class="quote-card">
+      <div class="quote-text">"I did my first session at midnight on a Tuesday and had 200 people listening within the hour. The community here is unlike anything."</div>
+      <div class="quote-author">Elara Voss</div>
+      <div class="quote-earnings">$8,400 last month</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"I quit my job after three months. I stream four times a week, two hours each. WhisperWave handles everything — I just show up and breathe."</div>
+      <div class="quote-author">Mara Solis</div>
+      <div class="quote-earnings">$5,200 last month</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"The private session feature changed everything. Even ten minutes with a devoted listener earns more than a full public stream used to."</div>
+      <div class="quote-author">Nox Alder</div>
+      <div class="quote-earnings">$3,100 last month</div>
+    </div>
+  </div>
+</div>
+
+<!-- APPLICATION FORM -->
+<div class="apply-section" id="apply">
+  <div class="section-label">Apply</div>
+  <h2>Start your <em>journey</em></h2>
+  <p>Tell us a little about yourself. We respond to every application within 24 hours.</p>
+
+  <div class="apply-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>First name</label>
+        <input class="form-input" type="text" placeholder="Your first name">
+      </div>
+      <div class="form-group">
+        <label>Last name</label>
+        <input class="form-input" type="text" placeholder="Your last name">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email address</label>
+      <input class="form-input" type="email" placeholder="you@example.com">
+    </div>
+
+    <div class="form-group">
+      <label>Creator name (what listeners will see)</label>
+      <input class="form-input" type="text" placeholder="e.g. Elara Voss, Nox Alder…">
+    </div>
+
+    <div class="form-group">
+      <label>Primary style</label>
+      <select class="form-select">
+        <option value="" disabled selected>Choose your main category</option>
+        <option>Soft Spoken / Whisper</option>
+        <option>Roleplay &amp; Personal Attention</option>
+        <option>Touch Sounds &amp; Tapping</option>
+        <option>Nature &amp; Ambient</option>
+        <option>Binaural &amp; Sleep Aid</option>
+        <option>Breathing &amp; Guided Relaxation</option>
+        <option>Dark &amp; Deep Voice</option>
+        <option>Something else</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Additional tags (select all that apply)</label>
+      <div class="tags-select" id="tagSelect">
+        <span class="tag-opt" onclick="toggleTag(this)">Ear-to-Ear</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Inaudible</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Page Turning</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Crinkle</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Layered Sounds</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Storytelling</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Guided Meditation</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Lo-fi Ambience</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Rain &amp; Weather</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Masculine Voice</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Feminine Voice</span>
+        <span class="tag-opt" onclick="toggleTag(this)">Non-binary Voice</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Tell us about yourself</label>
+      <textarea class="form-textarea" placeholder="What draws you to ASMR? What kind of experience do you want to create for your listeners? Any links to existing content are welcome but not required."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>How did you hear about WhisperWave?</label>
+      <select class="form-select">
+        <option value="" disabled selected>Select one</option>
+        <option>Another creator</option>
+        <option>Social media</option>
+        <option>Search engine</option>
+        <option>Friend or word of mouth</option>
+        <option>YouTube</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <button class="form-submit" onclick="submitApplication()">Submit Application</button>
+    <div class="form-note">By applying you agree to our Creator Terms of Service.<br>We respond to every application — usually within 24 hours.</div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">WhisperWave</div>
+  <ul class="footer-links">
+    <li><a href="#">About</a></li><li><a href="#">Creators</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 WhisperWave. All rights reserved.</div>
+</footer>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">🎙</div>
+  <div class="success-title">Application <em>received</em></div>
+  <div class="success-sub">Thank you for applying. We'll be in touch within 24 hours — keep an eye on your inbox.</div>
+  <a href="index.html" style="margin-top:1.5rem;background:var(--amber);color:var(--velvet);font-family:'Jost',sans-serif;font-size:0.74rem;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;border:none;padding:1rem 2.4rem;border-radius:3rem;cursor:pointer;text-decoration:none;display:inline-block;">Back to WhisperWave</a>
+</div>
+
+<script>
+  function toggleTag(el) {
+    el.classList.toggle('selected');
+  }
+
+  function submitApplication() {
+    document.getElementById('successOverlay').classList.add('show');
+  }
+</script>
+</body>
+</html>

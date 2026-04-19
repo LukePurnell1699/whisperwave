@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elara Voss — Live · WhisperWave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #f5efe6; --blush: #e8c9b0; --amber: #c8894a; --ember: #9b5a2a;
+    --velvet: #1a0f0a; --smoke: #2e1c14; --panel: #1f1209;
+    --border: rgba(245,239,230,0.07);
+  }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: 'Jost', sans-serif; background: var(--velvet); color: var(--cream); display: flex; flex-direction: column; }
+
+  /* TOP BAR */
+  .topbar { height: 56px; min-height: 56px; background: rgba(15,8,4,0.98); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; z-index: 100; }
+  .logo { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.2rem; letter-spacing:0.12em; color:var(--cream); text-decoration:none; }
+  .logo span { color:var(--amber); font-style:italic; }
+  .topbar-center { display: flex; align-items: center; gap: 1rem; }
+  .stream-title { font-size: 0.82rem; font-weight: 300; color: var(--cream); letter-spacing: 0.02em; }
+  .live-pill { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(224,85,85,0.15); border: 1px solid rgba(224,85,85,0.3); border-radius: 2rem; padding: 0.18rem 0.65rem; font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: #e05555; }
+  .live-dot { width: 5px; height: 5px; background: #e05555; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(224,85,85,0.4)} 50%{opacity:0.7;box-shadow:0 0 0 4px rgba(224,85,85,0)} }
+  .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+  .token-pill { display: flex; align-items: center; gap: 0.45rem; font-size: 0.72rem; font-weight: 300; color: var(--amber); border: 1px solid rgba(200,137,74,0.25); border-radius: 2rem; padding: 0.35rem 0.9rem; cursor: pointer; text-decoration: none; transition: all 0.25s; }
+  .token-pill:hover { background: rgba(200,137,74,0.08); }
+  .btn-sm { font-size: 0.66rem; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 2rem; cursor: pointer; border: none; transition: all 0.3s; }
+  .btn-sm-ghost { background: transparent; border: 1px solid var(--border); color: rgba(245,239,230,0.45); }
+  .btn-sm-ghost:hover { border-color: rgba(245,239,230,0.25); color: var(--cream); }
+  .btn-sm-back { background: transparent; border: 1px solid var(--border); color: rgba(245,239,230,0.45); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+  .btn-sm-back:hover { color: var(--cream); }
+
+  /* LAYOUT */
+  .room-layout { flex: 1; display: grid; grid-template-columns: 1fr 340px; overflow: hidden; }
+
+  /* STREAM AREA */
+  .stream-area { display: flex; flex-direction: column; overflow: hidden; background: #0d0806; }
+  .stream-viewport { flex: 1; position: relative; overflow: hidden; background: radial-gradient(ellipse at 40% 30%, rgba(120,60,30,0.4) 0%, transparent 55%), radial-gradient(ellipse at 70% 70%, rgba(80,30,15,0.3) 0%, transparent 50%), linear-gradient(180deg, #1e0f07 0%, #0d0806 100%); }
+
+  /* Animated ambient particles */
+  .ambient-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .particle { position: absolute; border-radius: 50%; animation: floatUp linear infinite; opacity: 0; }
+  @keyframes floatUp { 0%{opacity:0;transform:translateY(0) scale(0.5)} 20%{opacity:0.6} 80%{opacity:0.2} 100%{opacity:0;transform:translateY(-100vh) scale(1.5)} }
+
+  .creator-presence { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .creator-silhouette { width: 260px; opacity: 0.12; filter: blur(0.5px); }
+  .creator-glow { position: absolute; width: 500px; height: 600px; background: radial-gradient(ellipse, rgba(155,90,42,0.15) 0%, transparent 65%); top: 50%; left: 50%; transform: translate(-50%, -55%); animation: breathe 7s ease-in-out infinite; }
+  @keyframes breathe { 0%,100%{opacity:0.6;transform:translate(-50%,-55%) scale(1)} 50%{opacity:1;transform:translate(-50%,-55%) scale(1.06)} }
+
+  /* Waveform visualizer */
+  .stream-visualizer { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; display: flex; align-items: flex-end; justify-content: center; gap: 2px; padding: 0 2rem 1.5rem; }
+  .viz-bar { width: 3px; border-radius: 2px 2px 0 0; background: linear-gradient(to top, rgba(200,137,74,0.6), rgba(200,137,74,0.15)); animation: vizWave var(--d,1s) ease-in-out infinite; animation-delay: var(--dl,0s); }
+  @keyframes vizWave { 0%,100%{height:4px} 50%{height:var(--h,30px)} }
+
+  /* Stream overlays */
+  .stream-top-overlay { position: absolute; top: 0; left: 0; right: 0; padding: 1.2rem 1.5rem; background: linear-gradient(to bottom, rgba(13,8,6,0.85) 0%, transparent 100%); display: flex; align-items: center; justify-content: space-between; }
+  .creator-info-overlay { display: flex; align-items: center; gap: 1rem; }
+  .creator-avatar { width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(ellipse at 35% 30%, rgba(155,90,42,0.8) 0%, rgba(80,30,10,0.9) 100%); border: 1.5px solid rgba(200,137,74,0.35); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--cream); overflow: hidden; }
+  .creator-meta h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 300; color: var(--cream); }
+  .creator-meta p { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); opacity: 0.8; }
+  .stream-stats { display: flex; gap: 1.5rem; align-items: center; }
+  .stat-item { font-size: 0.68rem; color: rgba(245,239,230,0.5); letter-spacing: 0.04em; display: flex; align-items: center; gap: 0.4rem; }
+  .stat-item .dot { width: 5px; height: 5px; background: #e05555; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+
+  /* INTERACTION TOOLBAR */
+  .interaction-bar { background: rgba(10,5,3,0.95); border-top: 1px solid var(--border); padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .interaction-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,239,230,0.3); margin-right: 0.5rem; white-space: nowrap; }
+  .interact-btn { display: flex; align-items: center; gap: 0.4rem; font-size: 0.66rem; font-weight: 300; letter-spacing: 0.1em; color: rgba(245,239,230,0.5); border: 1px solid rgba(245,239,230,0.08); background: rgba(245,239,230,0.02); padding: 0.38rem 0.85rem; border-radius: 2rem; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
+  .interact-btn:hover { border-color: rgba(200,137,74,0.4); color: var(--blush); background: rgba(200,137,74,0.06); }
+  .interact-btn .cost { color: var(--amber); font-size: 0.6rem; margin-left: 0.2rem; }
+  .interact-btn.free-btn { border-color: rgba(245,239,230,0.14); }
+
+  /* SIDEBAR */
+  .sidebar { background: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .sidebar-tabs { display: flex; border-bottom: 1px solid var(--border); }
+  .tab-btn { flex: 1; padding: 0.85rem; font-size: 0.65rem; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,239,230,0.35); background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.25s; }
+  .tab-btn.active { color: var(--cream); border-bottom-color: var(--amber); }
+  .tab-btn:hover:not(.active) { color: rgba(245,239,230,0.65); }
+
+  /* CHAT PANEL */
+  .chat-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .chat-messages::-webkit-scrollbar { width: 2px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(200,137,74,0.2); border-radius: 1px; }
+  .msg { display: flex; flex-direction: column; gap: 0.1rem; animation: msgIn 0.3s ease-out; }
+  @keyframes msgIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .msg-author { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.06em; }
+  .msg-author.viewer { color: rgba(245,239,230,0.4); }
+  .msg-author.mod { color: #7bbf7b; }
+  .msg-author.gifter { color: var(--amber); }
+  .msg-author.creator { color: var(--blush); }
+  .msg-text { font-size: 0.78rem; font-weight: 200; line-height: 1.55; color: rgba(245,239,230,0.72); }
+  .msg-gift { background: rgba(200,137,74,0.08); border: 1px solid rgba(200,137,74,0.18); border-radius: 3px; padding: 0.6rem 0.8rem; display: flex; align-items: center; gap: 0.7rem; animation: giftIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes giftIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+  .gift-icon { font-size: 1.3rem; }
+  .gift-details { flex: 1; }
+  .gift-from { font-size: 0.63rem; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.1rem; }
+  .gift-name { font-size: 0.75rem; font-weight: 300; color: var(--cream); }
+  .gift-tokens { font-size: 0.6rem; color: rgba(200,137,74,0.65); }
+  .msg-system { font-size: 0.63rem; letter-spacing: 0.1em; color: rgba(245,239,230,0.22); text-align: center; font-style: italic; padding: 0.2rem 0; }
+
+  /* CHAT INPUT */
+  .chat-input-area { padding: 0.85rem; border-top: 1px solid var(--border); background: rgba(10,5,3,0.6); }
+  .chat-input-row { display: flex; gap: 0.5rem; align-items: center; }
+  .chat-input { flex: 1; background: rgba(245,239,230,0.04); border: 1px solid rgba(245,239,230,0.09); border-radius: 2rem; padding: 0.55rem 1rem; font-family: 'Jost', sans-serif; font-size: 0.78rem; font-weight: 200; color: var(--cream); outline: none; transition: border-color 0.25s; }
+  .chat-input::placeholder { color: rgba(245,239,230,0.25); }
+  .chat-input:focus { border-color: rgba(200,137,74,0.3); }
+  .send-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--amber); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
+  .send-btn:hover { background: var(--blush); transform: scale(1.08); }
+  .chat-hint { font-size: 0.6rem; color: rgba(245,239,230,0.2); margin-top: 0.5rem; letter-spacing: 0.06em; }
+  .chat-hint a { color: rgba(200,137,74,0.5); text-decoration: none; }
+  .chat-hint a:hover { color: var(--amber); }
+
+  /* GIFTS PANEL */
+  .gifts-panel { flex: 1; overflow-y: auto; padding: 1rem; display: none; flex-direction: column; gap: 0.6rem; }
+  .gifts-panel.visible { display: flex; }
+  .gifts-panel::-webkit-scrollbar { width: 2px; }
+  .gifts-panel::-webkit-scrollbar-thumb { background: rgba(200,137,74,0.2); border-radius: 1px; }
+  .gift-section-label { font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(245,239,230,0.3); margin: 0.5rem 0 0.3rem; }
+  .gift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .gift-item { background: rgba(245,239,230,0.025); border: 1px solid rgba(245,239,230,0.07); border-radius: 4px; padding: 0.9rem 0.75rem; text-align: center; cursor: pointer; transition: all 0.3s; }
+  .gift-item:hover { border-color: rgba(200,137,74,0.35); background: rgba(200,137,74,0.05); transform: translateY(-2px); }
+  .gift-item.special { border-color: rgba(200,137,74,0.2); background: rgba(200,137,74,0.04); }
+  .gift-item.special:hover { border-color: rgba(200,137,74,0.5); background: rgba(200,137,74,0.1); }
+  .gift-emoji { font-size: 1.8rem; display: block; margin-bottom: 0.4rem; }
+  .gift-item-name { font-size: 0.65rem; font-weight: 300; color: var(--cream); display: block; margin-bottom: 0.25rem; }
+  .gift-item-cost { font-size: 0.62rem; color: var(--amber); display: flex; align-items: center; justify-content: center; gap: 0.25rem; }
+  .gift-item-cost .tok-icon { font-size: 0.7rem; opacity: 0.8; }
+  .gift-send-btn { width: 100%; background: var(--amber); color: var(--velvet); font-family: 'Jost', sans-serif; font-size: 0.68rem; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; border: none; padding: 0.7rem; border-radius: 2rem; cursor: pointer; margin-top: 0.8rem; transition: all 0.3s; }
+  .gift-send-btn:hover { background: var(--blush); }
+  .token-balance-strip { background: rgba(200,137,74,0.06); border: 1px solid rgba(200,137,74,0.15); border-radius: 3px; padding: 0.7rem 1rem; display: flex; align-items: center; justify-content: space-between; }
+  .token-balance-strip span:first-child { font-size: 0.7rem; color: rgba(245,239,230,0.45); }
+  .token-balance-strip .bal { font-size: 0.82rem; color: var(--amber); font-weight: 300; }
+  .get-tokens-link { font-size: 0.62rem; color: rgba(200,137,74,0.6); text-decoration: none; letter-spacing: 0.08em; }
+  .get-tokens-link:hover { color: var(--amber); }
+
+  /* POPUP NOTIFICATION */
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(30,18,10,0.95); border: 1px solid rgba(200,137,74,0.3); border-radius: 3rem; padding: 0.7rem 1.5rem; font-size: 0.75rem; color: var(--cream); display: flex; align-items: center; gap: 0.6rem; opacity: 0; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); z-index: 200; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast-icon { font-size: 1rem; }
+
+  /* GIFT FLASH */
+  .gift-flash { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); opacity: 0; pointer-events: none; z-index: 150; text-align: center; transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .gift-flash.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .gift-flash-emoji { font-size: 4rem; display: block; filter: drop-shadow(0 0 30px rgba(200,137,74,0.6)); }
+  .gift-flash-text { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; color: var(--cream); margin-top: 0.5rem; opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:1.2rem;">
+    <a href="browse.html" class="btn-sm btn-sm-back">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6H2M5 9L2 6l3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Browse
+    </a>
+    <a href="index.html" class="logo">Whisper<span>Wave</span></a>
+  </div>
+  <div class="topbar-center">
+    <div class="live-pill"><span class="live-dot"></span>Live</div>
+    <span class="stream-title">Elara Voss — Soft Spoken Roleplay · Personal Attention</span>
+  </div>
+  <div class="topbar-right">
+    <a href="tokens.html" class="token-pill">◈ <strong id="tokenCount">850</strong> tokens <span style="font-size:0.6rem;opacity:0.5;margin-left:0.2rem">+</span></a>
+    <button class="btn-sm btn-sm-ghost">Follow</button>
+    <button class="btn-sm btn-sm-ghost" style="color:rgba(224,85,85,0.7);border-color:rgba(224,85,85,0.2);">⚑ Report</button>
+  </div>
+</div>
+
+<div class="room-layout">
+
+  <!-- STREAM AREA -->
+  <div class="stream-area">
+    <div class="stream-viewport">
+      <!-- Ambient particles -->
+      <div class="ambient-particles" id="particles"></div>
+      <div class="creator-glow"></div>
+      <div class="creator-presence">
+        <svg class="creator-silhouette" viewBox="0 0 120 180" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="60" cy="32" rx="22" ry="25"/>
+          <path d="M20 100 Q25 65 60 58 Q95 65 100 100 L105 180 H15 Z"/>
+        </svg>
+      </div>
+      <!-- Stream top overlay -->
+      <div class="stream-top-overlay">
+        <div class="creator-info-overlay">
+          <div class="creator-avatar">E</div>
+          <div class="creator-meta">
+            <h3>Elara Voss</h3>
+            <p>Whisper · Roleplay · Personal Attention</p>
+          </div>
+        </div>
+        <div class="stream-stats">
+          <div class="stat-item"><span class="dot"></span> <span id="viewerNum">3,412</span> listening</div>
+          <div class="stat-item">⏱ 2h 14m live</div>
+          <div class="stat-item">🎁 <span id="giftTotal">247</span> gifts</div>
+        </div>
+      </div>
+      <!-- Waveform -->
+      <div class="stream-visualizer" id="visualizer"></div>
+    </div>
+
+    <!-- INTERACTION BAR -->
+    <div class="interaction-bar">
+      <span class="interaction-label">Request</span>
+      <button class="interact-btn free-btn" onclick="sendInteraction('👋 waved hello')">👋 Wave</button>
+      <button class="interact-btn" onclick="spendTokens(10,'whisper request')">🎙 Whisper Request <span class="cost">10◈</span></button>
+      <button class="interact-btn" onclick="spendTokens(25,'name mention')">💬 Say My Name <span class="cost">25◈</span></button>
+      <button class="interact-btn" onclick="spendTokens(50,'personal attention')">✨ Personal Attention <span class="cost">50◈</span></button>
+      <button class="interact-btn" onclick="spendTokens(100,'ear-to-ear')">👂 Ear-to-Ear <span class="cost">100◈</span></button>
+      <button class="interact-btn" onclick="openPrivateRequest()" style="margin-left:auto;border-color:rgba(200,137,74,0.3);color:var(--blush)">🔒 Private Session <span class="cost">500◈</span></button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-tabs">
+      <button class="tab-btn active" onclick="showTab('chat',this)">Chat</button>
+      <button class="tab-btn" onclick="showTab('gifts',this)">Gifts</button>
+      <button class="tab-btn" onclick="showTab('about',this)">About</button>
+    </div>
+
+    <!-- CHAT PANEL -->
+    <div class="chat-panel" id="tab-chat">
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg-system">Session started 2h 14m ago</div>
+
+        <div class="msg">
+          <span class="msg-author viewer">quiethands_9</span>
+          <span class="msg-text">elara your voice is so calming tonight 🤍</span>
+        </div>
+        <div class="msg">
+          <span class="msg-author viewer">dormant.wave</span>
+          <span class="msg-text">the page turning sounds omg</span>
+        </div>
+        <div class="msg-gift">
+          <span class="gift-icon">🌸</span>
+          <div class="gift-details">
+            <div class="gift-from">pillowfort_era sent a gift</div>
+            <div class="gift-name">Soft Petal</div>
+            <div class="gift-tokens">50 tokens</div>
+          </div>
+        </div>
+        <div class="msg">
+          <span class="msg-author creator">Elara Voss</span>
+          <span class="msg-text">thank you so much pillowfort, that means everything to me 🌸</span>
+        </div>
+        <div class="msg">
+          <span class="msg-author viewer">mistymorning_x</span>
+          <span class="msg-text">can you do the inaudible section again please?</span>
+        </div>
+        <div class="msg">
+          <span class="msg-author viewer">lullabydreams</span>
+          <span class="msg-text">been here for an hour and I can't leave 😮‍💨</span>
+        </div>
+        <div class="msg">
+          <span class="msg-author mod">◈ mod_ash</span>
+          <span class="msg-text">Keep chat warm and welcoming everyone 🌙</span>
+        </div>
+        <div class="msg-gift">
+          <span class="gift-icon">🕯</span>
+          <div class="gift-details">
+            <div class="gift-from">velvet.hour sent a gift</div>
+            <div class="gift-name">Candlelight</div>
+            <div class="gift-tokens">100 tokens</div>
+          </div>
+        </div>
+        <div class="msg">
+          <span class="msg-author creator">Elara Voss</span>
+          <span class="msg-text">velvet.hour you are so generous, sending warmth right back to you 🕯</span>
+        </div>
+        <div class="msg">
+          <span class="msg-author viewer">softsound44</span>
+          <span class="msg-text">the rain layer you added is perfect</span>
+        </div>
+        <div class="msg">
+          <span class="msg-author viewer">quiethands_9</span>
+          <span class="msg-text">i always fall asleep to her streams and wake up so rested</span>
+        </div>
+        <div class="msg">
+          <span class="msg-author viewer">wandering.ear</span>
+          <span class="msg-text">first time here, not sure what I expected but wow</span>
+        </div>
+        <div class="msg-system">wandering.ear joined the room</div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" type="text" placeholder="Say something..." maxlength="200" onkeydown="handleChatKey(event)">
+          <button class="send-btn" onclick="sendChat()">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5h11M7.5 2l4.5 4.5L7.5 11" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="chat-hint">Out of tokens? <a href="tokens.html">Get more ◈</a></div>
+      </div>
+    </div>
+
+    <!-- GIFTS PANEL -->
+    <div class="gifts-panel" id="tab-gifts">
+      <div class="token-balance-strip">
+        <span>Your balance</span>
+        <span class="bal">◈ <span id="giftTokenCount">850</span></span>
+        <a href="tokens.html" class="get-tokens-link">+ Get more</a>
+      </div>
+
+      <div class="gift-section-label">Kind Gestures</div>
+      <div class="gift-grid">
+        <div class="gift-item" onclick="sendGift(this,'Soft Petal','🌸',50)">
+          <span class="gift-emoji">🌸</span>
+          <span class="gift-item-name">Soft Petal</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 50</span>
+        </div>
+        <div class="gift-item" onclick="sendGift(this,'Warm Breath','🍃',30)">
+          <span class="gift-emoji">🍃</span>
+          <span class="gift-item-name">Warm Breath</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 30</span>
+        </div>
+        <div class="gift-item" onclick="sendGift(this,'Candlelight','🕯',100)">
+          <span class="gift-emoji">🕯</span>
+          <span class="gift-item-name">Candlelight</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 100</span>
+        </div>
+        <div class="gift-item" onclick="sendGift(this,'Moon Drop','🌙',75)">
+          <span class="gift-emoji">🌙</span>
+          <span class="gift-item-name">Moon Drop</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 75</span>
+        </div>
+      </div>
+
+      <div class="gift-section-label">Premium Gifts</div>
+      <div class="gift-grid">
+        <div class="gift-item special" onclick="sendGift(this,'Golden Whisper','✨',500)">
+          <span class="gift-emoji">✨</span>
+          <span class="gift-item-name">Golden Whisper</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 500</span>
+        </div>
+        <div class="gift-item special" onclick="sendGift(this,'Crystal Rain','💎',250)">
+          <span class="gift-emoji">💎</span>
+          <span class="gift-item-name">Crystal Rain</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 250</span>
+        </div>
+        <div class="gift-item special" onclick="sendGift(this,'Velvet Rose','🌹',300)">
+          <span class="gift-emoji">🌹</span>
+          <span class="gift-item-name">Velvet Rose</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 300</span>
+        </div>
+        <div class="gift-item special" onclick="sendGift(this,'Night Bloom','🌺',400)">
+          <span class="gift-emoji">🌺</span>
+          <span class="gift-item-name">Night Bloom</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 400</span>
+        </div>
+      </div>
+
+      <div class="gift-section-label">Grand Gestures</div>
+      <div class="gift-grid">
+        <div class="gift-item special" onclick="sendGift(this,'Throne of Sound','👑',2000)">
+          <span class="gift-emoji">👑</span>
+          <span class="gift-item-name">Throne of Sound</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 2,000</span>
+        </div>
+        <div class="gift-item special" onclick="sendGift(this,'Eternal Ember','🔥',5000)">
+          <span class="gift-emoji">🔥</span>
+          <span class="gift-item-name">Eternal Ember</span>
+          <span class="gift-item-cost"><span class="tok-icon">◈</span> 5,000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT PANEL -->
+    <div class="gifts-panel" id="tab-about" style="display:none">
+      <div style="padding:0.5rem 0;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--cream);margin-bottom:0.3rem;">Elara Voss</div>
+        <div style="font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--amber);margin-bottom:1.2rem;">Whisper · Roleplay · Personal Attention</div>
+        <p style="font-size:0.8rem;font-weight:200;line-height:1.85;color:rgba(245,239,230,0.5);margin-bottom:1.5rem;">I create intimate soundscapes designed to make you feel genuinely cared for. Every session is live, unscripted, and made just for you and the people in this room.</p>
+
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,239,230,0.3);margin-bottom:0.8rem;">Session Tags</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1.5rem;">
+          <span style="font-size:0.62rem;border:1px solid rgba(245,239,230,0.1);padding:0.2rem 0.6rem;border-radius:2rem;color:rgba(245,239,230,0.4);">Whisper</span>
+          <span style="font-size:0.62rem;border:1px solid rgba(245,239,230,0.1);padding:0.2rem 0.6rem;border-radius:2rem;color:rgba(245,239,230,0.4);">Ear-to-Ear</span>
+          <span style="font-size:0.62rem;border:1px solid rgba(245,239,230,0.1);padding:0.2rem 0.6rem;border-radius:2rem;color:rgba(245,239,230,0.4);">Roleplay</span>
+          <span style="font-size:0.62rem;border:1px solid rgba(245,239,230,0.1);padding:0.2rem 0.6rem;border-radius:2rem;color:rgba(245,239,230,0.4);">Page Turning</span>
+          <span style="font-size:0.62rem;border:1px solid rgba(245,239,230,0.1);padding:0.2rem 0.6rem;border-radius:2rem;color:rgba(245,239,230,0.4);">Inaudible</span>
+          <span style="font-size:0.62rem;border:1px solid rgba(245,239,230,0.1);padding:0.2rem 0.6rem;border-radius:2rem;color:rgba(245,239,230,0.4);">Personal Attention</span>
+        </div>
+
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,239,230,0.3);margin-bottom:0.8rem;">Stats</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1.5rem;">
+          <div style="background:rgba(245,239,230,0.025);border:1px solid var(--border);border-radius:3px;padding:0.8rem;text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--cream);">1,240</div>
+            <div style="font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,239,230,0.3);margin-top:0.2rem;">Followers</div>
+          </div>
+          <div style="background:rgba(245,239,230,0.025);border:1px solid var(--border);border-radius:3px;padding:0.8rem;text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--cream);">286</div>
+            <div style="font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,239,230,0.3);margin-top:0.2rem;">Sessions</div>
+          </div>
+        </div>
+
+        <button onclick="spendTokens(500,'private session with Elara')" style="width:100%;background:rgba(200,137,74,0.08);border:1px solid rgba(200,137,74,0.25);color:var(--blush);font-family:'Jost',sans-serif;font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;padding:0.8rem;border-radius:2rem;cursor:pointer;transition:all 0.3s;" onmouseover="this.style.background='rgba(200,137,74,0.15)'" onmouseout="this.style.background='rgba(200,137,74,0.08)'">
+          🔒 Request Private Session — 500◈
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✨</span>
+  <span id="toastMsg">Gift sent!</span>
+</div>
+
+<!-- GIFT FLASH -->
+<div class="gift-flash" id="giftFlash">
+  <span class="gift-flash-emoji" id="flashEmoji">🌸</span>
+  <div class="gift-flash-text" id="flashText">Soft Petal sent!</div>
+</div>
+
+<script>
+  let tokens = 850;
+
+  // Build visualizer bars
+  const viz = document.getElementById('visualizer');
+  for (let i = 0; i < 60; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'viz-bar';
+    const h = Math.floor(Math.random() * 40) + 8;
+    const d = (Math.random() * 0.8 + 0.7).toFixed(1);
+    const dl = (Math.random() * 0.5).toFixed(2);
+    bar.style.cssText = `--h:${h}px;--d:${d}s;--dl:${dl}s;animation-duration:${d}s;animation-delay:${dl}s;height:4px`;
+    viz.appendChild(bar);
+  }
+
+  // Ambient particles
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 3 + 1;
+    p.style.cssText = `width:${size}px;height:${size}px;background:rgba(200,137,74,${Math.random()*0.3+0.1});left:${Math.random()*100}%;top:${Math.random()*100+100}%;animation-duration:${Math.random()*15+10}s;animation-delay:${Math.random()*8}s;`;
+    pc.appendChild(p);
+  }
+
+  function updateTokenDisplay() {
+    document.getElementById('tokenCount').textContent = tokens.toLocaleString();
+    document.getElementById('giftTokenCount').textContent = tokens.toLocaleString();
+  }
+
+  function showToast(icon, msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function showGiftFlash(emoji, name) {
+    const f = document.getElementById('giftFlash');
+    document.getElementById('flashEmoji').textContent = emoji;
+    document.getElementById('flashText').textContent = name + ' sent!';
+    f.classList.add('show');
+    setTimeout(() => f.classList.remove('show'), 2000);
+  }
+
+  function spendTokens(amount, action) {
+    if (tokens < amount) {
+      showToast('◈', 'Not enough tokens — get more!');
+      setTimeout(() => window.open('tokens.html','_blank'), 1000);
+      return false;
+    }
+    tokens -= amount;
+    updateTokenDisplay();
+    addChatMessage('You', `✨ Requested: ${action}`, 'gifter');
+    showToast('✨', `${action} — ${amount} tokens spent`);
+    return true;
+  }
+
+  function sendInteraction(action) {
+    addChatMessage('You', action, 'viewer');
+    showToast('👋', 'Wave sent!');
+  }
+
+  function openPrivateRequest() {
+    spendTokens(500, 'private session');
+  }
+
+  function sendGift(el, name, emoji, cost) {
+    if (!spendTokens(cost, name)) return;
+    showGiftFlash(emoji, name);
+
+    // Add gift to chat
+    const msgs = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg-gift';
+    div.innerHTML = `<span class="gift-icon">${emoji}</span><div class="gift-details"><div class="gift-from">You sent a gift</div><div class="gift-name">${name}</div><div class="gift-tokens">${cost} tokens</div></div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // Increment gift counter
+    const gc = document.getElementById('giftTotal');
+    gc.textContent = parseInt(gc.textContent.replace(',','')) + 1;
+  }
+
+  function addChatMessage(author, text, type) {
+    const msgs = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg';
+    div.innerHTML = `<span class="msg-author ${type}">${author}</span><span class="msg-text">${text}</span>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function handleChatKey(e) {
+    if (e.key === 'Enter') sendChat();
+  }
+
+  function sendChat() {
+    const input = document.getElementById('chatInput');
+    const val = input.value.trim();
+    if (!val) return;
+    addChatMessage('You', val, 'viewer');
+    input.value = '';
+  }
+
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-chat').style.display = 'none';
+    document.getElementById('tab-gifts').style.display = 'none';
+    document.getElementById('tab-about').style.display = 'none';
+
+    if (name === 'chat') {
+      document.getElementById('tab-chat').style.display = 'flex';
+    } else {
+      const panel = document.getElementById('tab-' + name);
+      panel.style.display = 'flex';
+      panel.classList.add('visible');
+    }
+  }
+
+  // Simulate live chat
+  const fakeMessages = [
+    ['dormant.wave','viewer','her breathing sounds tonight... i am dissolved'],
+    ['moonwhisper_7','viewer','i drove home from work just to be here for this'],
+    ['nightjar.asmr','viewer','the ear cupping was transcendent'],
+    ['softsound44','viewer','can everyone else hear that subtle rain layer? 🌧'],
+    ['pillowfort_era','viewer','elara you absolute legend staying live so long'],
+    ['lullabydreams','viewer','my cat fell asleep too lol'],
+    ['quiethands_9','viewer','sending all the love from the corner of my blanket fort'],
+  ];
+  let fakeIdx = 0;
+  setInterval(() => {
+    const [author, type, text] = fakeMessages[fakeIdx % fakeMessages.length];
+    addChatMessage(author, text, type);
+    fakeIdx++;
+  }, 7000 + Math.random() * 5000);
+
+  // Simulate viewer count fluctuation
+  setInterval(() => {
+    const base = 3412;
+    const el = document.getElementById('viewerNum');
+    const delta = Math.floor(Math.random() * 30) - 10;
+    const current = parseInt(el.textContent.replace(',','')) + delta;
+    el.textContent = Math.max(3000, current).toLocaleString();
+  }, 8000);
+</script>
+</body>
+</html>

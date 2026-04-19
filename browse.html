@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Creators — WhisperWave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #f5efe6; --blush: #e8c9b0; --amber: #c8894a; --ember: #9b5a2a;
+    --velvet: #1a0f0a; --smoke: #2e1c14; --mist: rgba(245,239,230,0.06);
+    --glow: rgba(200,137,74,0.18);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Jost', sans-serif; background: var(--velvet); color: var(--cream); min-height: 100vh; overflow-x: hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; opacity:0.4; }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1.4rem 3rem; background:linear-gradient(to bottom,rgba(26,15,10,0.98) 0%,transparent 100%); backdrop-filter:blur(4px); }
+  .logo { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.4rem; letter-spacing:0.12em; color:var(--cream); text-decoration:none; }
+  .logo span { color:var(--amber); font-style:italic; }
+  .nav-center { display:flex; gap:2.5rem; list-style:none; }
+  .nav-center a { font-weight:200; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(245,239,230,0.55); text-decoration:none; transition:color 0.3s; }
+  .nav-center a:hover, .nav-center a.active { color:var(--cream); }
+  .nav-right { display:flex; gap:1rem; align-items:center; }
+  .btn-nav-ghost { font-size:0.72rem; font-weight:300; letter-spacing:0.15em; text-transform:uppercase; color:rgba(245,239,230,0.55); text-decoration:none; transition:color 0.3s; }
+  .btn-nav-ghost:hover { color:var(--cream); }
+  .btn-nav-primary { font-size:0.72rem; font-weight:300; letter-spacing:0.15em; text-transform:uppercase; color:var(--velvet); background:var(--amber); border:none; padding:0.55rem 1.5rem; border-radius:3rem; cursor:pointer; text-decoration:none; transition:all 0.3s; }
+  .btn-nav-primary:hover { background:var(--blush); }
+  .token-display { display:flex; align-items:center; gap:0.5rem; font-size:0.72rem; font-weight:300; letter-spacing:0.1em; color:var(--amber); border:1px solid rgba(200,137,74,0.25); border-radius:2rem; padding:0.4rem 1rem; text-decoration:none; transition:all 0.3s; }
+  .token-display:hover { background:rgba(200,137,74,0.08); }
+  .token-icon { font-size:0.9rem; }
+
+  /* BROWSE HEADER */
+  .browse-header { position:relative; z-index:1; padding:9rem 3rem 3rem; max-width:1200px; margin:0 auto; }
+  .browse-header h1 { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2.5rem,5vw,4rem); color:var(--cream); margin-bottom:0.5rem; }
+  .browse-header h1 em { font-style:italic; color:var(--blush); }
+  .browse-header p { font-weight:200; font-size:0.9rem; color:rgba(245,239,230,0.45); letter-spacing:0.03em; }
+  .live-total { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.67rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--amber); margin-bottom:1rem; }
+  .live-dot { width:6px; height:6px; background:#e05555; border-radius:50%; animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(224,85,85,0.4)} 50%{opacity:0.7;box-shadow:0 0 0 5px rgba(224,85,85,0)} }
+
+  /* FILTERS */
+  .filters-bar { position:relative; z-index:1; padding:0 3rem 2rem; max-width:1200px; margin:0 auto; display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  .filter-btn { font-size:0.68rem; font-weight:300; letter-spacing:0.14em; text-transform:uppercase; color:rgba(245,239,230,0.45); border:1px solid rgba(245,239,230,0.1); background:transparent; padding:0.4rem 1rem; border-radius:2rem; cursor:pointer; transition:all 0.3s; }
+  .filter-btn:hover, .filter-btn.active { border-color:rgba(200,137,74,0.5); color:var(--blush); background:rgba(200,137,74,0.06); }
+  .filter-sep { width:1px; height:20px; background:rgba(245,239,230,0.1); margin:0 0.4rem; }
+  .sort-select { font-family:'Jost',sans-serif; font-size:0.68rem; font-weight:300; letter-spacing:0.12em; color:rgba(245,239,230,0.45); background:transparent; border:1px solid rgba(245,239,230,0.1); border-radius:2rem; padding:0.4rem 1rem; cursor:pointer; outline:none; appearance:none; -webkit-appearance:none; padding-right:1.8rem; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(245,239,230,0.3)' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 0.8rem center; }
+  .sort-select option { background:var(--smoke); color:var(--cream); }
+
+  /* CREATOR GRID */
+  .creators-section { position:relative; z-index:1; padding:0 3rem 6rem; max-width:1200px; margin:0 auto; }
+  .section-row-label { font-size:0.64rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--amber); margin-bottom:1.5rem; padding-top:2rem; }
+  .creators-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; margin-bottom:3rem; }
+  .creator-card { position:relative; border-radius:4px; overflow:hidden; aspect-ratio:2/3; cursor:pointer; transition:transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94); text-decoration:none; display:block; }
+  .creator-card:hover { transform:translateY(-8px) scale(1.02); }
+  .creator-card:hover .card-hover-overlay { opacity:1; }
+  .card-bg-img { width:100%; height:100%; position:relative; }
+  .card-bg-img::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 35%,rgba(26,15,10,0.97) 100%); z-index:1; }
+  .card-hover-overlay { position:absolute; inset:0; background:rgba(200,137,74,0.06); z-index:1; opacity:0; transition:opacity 0.3s; }
+  .card-viewers { position:absolute; top:0.75rem; right:0.75rem; z-index:3; background:rgba(26,15,10,0.8); backdrop-filter:blur(4px); font-size:0.6rem; letter-spacing:0.06em; color:rgba(245,239,230,0.75); padding:0.22rem 0.55rem; border-radius:2rem; display:flex; align-items:center; gap:0.35rem; }
+  .card-viewers::before { content:''; width:4px; height:4px; background:#e05555; border-radius:50%; animation:pulse 2s ease-in-out infinite; }
+  .card-badge { position:absolute; top:0.75rem; left:0.75rem; z-index:3; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.18rem 0.5rem; border-radius:2rem; }
+  .badge-new { background:rgba(120,80,180,0.35); border:1px solid rgba(150,100,200,0.4); color:rgba(200,170,240,0.85); }
+  .badge-top { background:rgba(200,137,74,0.2); border:1px solid rgba(200,137,74,0.35); color:var(--amber); }
+  .badge-priv { background:rgba(180,60,80,0.25); border:1px solid rgba(200,80,100,0.35); color:rgba(240,160,170,0.85); }
+  .card-info { position:absolute; bottom:1rem; left:1rem; right:1rem; z-index:2; }
+  .card-name { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:300; color:var(--cream); display:block; margin-bottom:0.15rem; }
+  .card-genre { font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--amber); opacity:0.8; display:block; margin-bottom:0.5rem; }
+  .card-tags { display:flex; gap:0.3rem; flex-wrap:wrap; }
+  .card-tag { font-size:0.56rem; letter-spacing:0.08em; color:rgba(245,239,230,0.35); border:1px solid rgba(245,239,230,0.08); padding:0.15rem 0.4rem; border-radius:2rem; }
+  .c1{background:radial-gradient(ellipse at 35% 25%,rgba(120,60,30,0.6) 0%,transparent 60%),linear-gradient(180deg,#281510 0%,#120a06 100%)}
+  .c2{background:radial-gradient(ellipse at 60% 20%,rgba(80,50,80,0.5) 0%,transparent 60%),linear-gradient(180deg,#1e1218 0%,#100a10 100%)}
+  .c3{background:radial-gradient(ellipse at 40% 30%,rgba(30,70,80,0.5) 0%,transparent 60%),linear-gradient(180deg,#0e1c20 0%,#07100f 100%)}
+  .c4{background:radial-gradient(ellipse at 50% 20%,rgba(100,70,30,0.5) 0%,transparent 60%),linear-gradient(180deg,#201508 0%,#120b04 100%)}
+  .c5{background:radial-gradient(ellipse at 50% 25%,rgba(60,40,90,0.6) 0%,transparent 60%),linear-gradient(180deg,#160e22 0%,#0c0814 100%)}
+  .c6{background:radial-gradient(ellipse at 45% 30%,rgba(40,80,60,0.5) 0%,transparent 60%),linear-gradient(180deg,#0e1e18 0%,#060f0c 100%)}
+  .c7{background:radial-gradient(ellipse at 55% 20%,rgba(90,20,40,0.6) 0%,transparent 60%),linear-gradient(180deg,#200810 0%,#120408 100%)}
+  .c8{background:radial-gradient(ellipse at 40% 35%,rgba(70,60,20,0.6) 0%,transparent 60%),linear-gradient(180deg,#1c1808 0%,#100e04 100%)}
+  .c9{background:radial-gradient(ellipse at 50% 25%,rgba(30,60,100,0.6) 0%,transparent 60%),linear-gradient(180deg,#0a1225 0%,#060912 100%)}
+  .c10{background:radial-gradient(ellipse at 45% 30%,rgba(80,30,70,0.6) 0%,transparent 60%),linear-gradient(180deg,#1a0c18 0%,#0e060c 100%)}
+  .c11{background:radial-gradient(ellipse at 55% 20%,rgba(20,80,70,0.6) 0%,transparent 60%),linear-gradient(180deg,#081c1a 0%,#040e0d 100%)}
+  .c12{background:radial-gradient(ellipse at 40% 25%,rgba(110,60,20,0.6) 0%,transparent 60%),linear-gradient(180deg,#241408 0%,#140a04 100%)}
+
+  /* LOAD MORE */
+  .load-more-wrap { text-align:center; padding:2rem 0 4rem; }
+  .btn-ghost-large { font-size:0.74rem; font-weight:300; letter-spacing:0.2em; text-transform:uppercase; color:rgba(245,239,230,0.4); border:1px solid rgba(245,239,230,0.1); padding:0.8rem 2.5rem; border-radius:3rem; cursor:pointer; background:transparent; transition:all 0.3s; }
+  .btn-ghost-large:hover { color:var(--cream); border-color:rgba(245,239,230,0.25); }
+
+  /* BECOME CREATOR STRIP */
+  .become-strip { position:relative; z-index:1; margin:0 3rem 6rem; max-width:1200px; margin-left:auto; margin-right:auto; border:1px solid rgba(200,137,74,0.18); border-radius:6px; padding:3rem 4rem; background:radial-gradient(ellipse at 30% 50%, rgba(155,90,42,0.08) 0%, transparent 70%); display:flex; align-items:center; justify-content:space-between; gap:3rem; }
+  .become-strip h3 { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--cream); margin-bottom:0.5rem; }
+  .become-strip h3 em { font-style:italic; color:var(--blush); }
+  .become-strip p { font-size:0.84rem; font-weight:200; color:rgba(245,239,230,0.42); max-width:40ch; line-height:1.8; }
+  .btn-primary { background:var(--amber); color:var(--velvet); font-family:'Jost',sans-serif; font-size:0.74rem; font-weight:400; letter-spacing:0.2em; text-transform:uppercase; border:none; padding:1rem 2.4rem; border-radius:3rem; cursor:pointer; transition:all 0.4s; text-decoration:none; display:inline-block; white-space:nowrap; }
+  .btn-primary:hover { background:var(--blush); transform:translateY(-2px); box-shadow:0 12px 40px rgba(200,137,74,0.28); }
+
+  footer { border-top:1px solid rgba(245,239,230,0.06); padding:3rem 2rem; text-align:center; position:relative; z-index:1; }
+  .footer-logo { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:300; color:rgba(245,239,230,0.28); letter-spacing:0.15em; margin-bottom:1rem; }
+  .footer-links { display:flex; gap:2rem; justify-content:center; list-style:none; margin-bottom:2rem; }
+  .footer-links a { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:rgba(245,239,230,0.22); text-decoration:none; transition:color 0.3s; }
+  .footer-links a:hover { color:rgba(245,239,230,0.5); }
+  .footer-copy { font-size:0.63rem; letter-spacing:0.1em; color:rgba(245,239,230,0.16); }
+  ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--velvet)} ::-webkit-scrollbar-thumb{background:rgba(200,137,74,0.3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Whisper<span>Wave</span></a>
+  <ul class="nav-center">
+    <li><a href="browse.html" class="active">Browse</a></li>
+    <li><a href="browse.html">Live Now</a></li>
+    <li><a href="browse.html">Categories</a></li>
+    <li><a href="become-creator.html">Creators</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="tokens.html" class="token-display"><span class="token-icon">◈</span> 850 tokens</a>
+    <a href="#" class="btn-nav-ghost">Account</a>
+    <a href="become-creator.html" class="btn-nav-primary">Go Live</a>
+  </div>
+</nav>
+
+<div class="browse-header">
+  <div class="live-total"><span class="live-dot"></span>47 creators live now · 28,400 listening</div>
+  <h1>Find your <em>sound</em></h1>
+  <p>Every creator, every sensation — live and waiting for you right now.</p>
+</div>
+
+<div class="filters-bar">
+  <button class="filter-btn active" onclick="setFilter(this)">All</button>
+  <button class="filter-btn" onclick="setFilter(this)">Whisper</button>
+  <button class="filter-btn" onclick="setFilter(this)">Roleplay</button>
+  <button class="filter-btn" onclick="setFilter(this)">Touch &amp; Tapping</button>
+  <button class="filter-btn" onclick="setFilter(this)">Breathing</button>
+  <button class="filter-btn" onclick="setFilter(this)">Nature</button>
+  <button class="filter-btn" onclick="setFilter(this)">Dark &amp; Deep</button>
+  <button class="filter-btn" onclick="setFilter(this)">Binaural</button>
+  <button class="filter-btn" onclick="setFilter(this)">Personal Attention</button>
+  <div class="filter-sep"></div>
+  <select class="sort-select">
+    <option>Most Watched</option>
+    <option>Newest</option>
+    <option>Trending</option>
+    <option>Fewest Viewers</option>
+  </select>
+</div>
+
+<div class="creators-section">
+  <div class="section-row-label">Featured Live</div>
+  <div class="creators-grid">
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c1"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">3,412</div>
+      <div class="card-badge badge-top">Top</div>
+      <div class="card-info">
+        <span class="card-name">Elara Voss</span>
+        <span class="card-genre">Whisper · Roleplay</span>
+        <div class="card-tags"><span class="card-tag">ear-to-ear</span><span class="card-tag">personal attention</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c2"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">2,104</div>
+      <div class="card-info">
+        <span class="card-name">Sera Moon</span>
+        <span class="card-genre">Rain · Breathing</span>
+        <div class="card-tags"><span class="card-tag">binaural</span><span class="card-tag">sleep</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c5"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">1,840</div>
+      <div class="card-badge badge-top">Top</div>
+      <div class="card-info">
+        <span class="card-name">Mara Solis</span>
+        <span class="card-genre">Touch · Tapping</span>
+        <div class="card-tags"><span class="card-tag">glass</span><span class="card-tag">crinkle</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c9"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">1,230</div>
+      <div class="card-info">
+        <span class="card-name">Asha Wyn</span>
+        <span class="card-genre">Nature · Soft Hum</span>
+        <div class="card-tags"><span class="card-tag">forest</span><span class="card-tag">grounding</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c7"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">927</div>
+      <div class="card-badge badge-new">New</div>
+      <div class="card-info">
+        <span class="card-name">Nox Alder</span>
+        <span class="card-genre">Dark · Deep Voice</span>
+        <div class="card-tags"><span class="card-tag">masculine</span><span class="card-tag">whisper</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c4"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">776</div>
+      <div class="card-info">
+        <span class="card-name">Oryn Vale</span>
+        <span class="card-genre">Spa · Layered</span>
+        <div class="card-tags"><span class="card-tag">relaxation</span><span class="card-tag">guided</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c3"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">611</div>
+      <div class="card-info">
+        <span class="card-name">Calla Vance</span>
+        <span class="card-genre">Fire · Crinkle</span>
+        <div class="card-tags"><span class="card-tag">cozy</span><span class="card-tag">foley</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c10"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">544</div>
+      <div class="card-badge badge-new">New</div>
+      <div class="card-info">
+        <span class="card-name">Lune Dray</span>
+        <span class="card-genre">Binaural · Sleep</span>
+        <div class="card-tags"><span class="card-tag">theta waves</span><span class="card-tag">drone</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c6"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">489</div>
+      <div class="card-info">
+        <span class="card-name">Vale Rin</span>
+        <span class="card-genre">Roleplay · Soft</span>
+        <div class="card-tags"><span class="card-tag">caring</span><span class="card-tag">immersive</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c11"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">312</div>
+      <div class="card-badge badge-priv">Private avail.</div>
+      <div class="card-info">
+        <span class="card-name">Sable Quinn</span>
+        <span class="card-genre">Whisper · Dark</span>
+        <div class="card-tags"><span class="card-tag">intimate</span><span class="card-tag">storytelling</span></div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="section-row-label">Rising Creators</div>
+  <div class="creators-grid">
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c12"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">284</div>
+      <div class="card-badge badge-new">New</div>
+      <div class="card-info">
+        <span class="card-name">Roan Hale</span>
+        <span class="card-genre">Breathing · Slow</span>
+        <div class="card-tags"><span class="card-tag">mindful</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c8"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">198</div>
+      <div class="card-info">
+        <span class="card-name">Ivy Starr</span>
+        <span class="card-genre">Touch · Layered</span>
+        <div class="card-tags"><span class="card-tag">fabric</span><span class="card-tag">soothing</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c2"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">175</div>
+      <div class="card-badge badge-priv">Private avail.</div>
+      <div class="card-info">
+        <span class="card-name">Dusk Marlowe</span>
+        <span class="card-genre">Deep Voice · Guided</span>
+        <div class="card-tags"><span class="card-tag">masculine</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c9"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">143</div>
+      <div class="card-info">
+        <span class="card-name">Petal Finch</span>
+        <span class="card-genre">Nature · Foley</span>
+        <div class="card-tags"><span class="card-tag">rain</span><span class="card-tag">leaves</span></div>
+      </div>
+    </a>
+
+    <a href="room.html" class="creator-card">
+      <div class="card-bg-img c5"></div>
+      <div class="card-hover-overlay"></div>
+      <div class="card-viewers">97</div>
+      <div class="card-badge badge-new">New</div>
+      <div class="card-info">
+        <span class="card-name">Thistle Grey</span>
+        <span class="card-genre">Whisper · Abstract</span>
+        <div class="card-tags"><span class="card-tag">experimental</span></div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="load-more-wrap">
+    <button class="btn-ghost-large">Load more creators</button>
+  </div>
+</div>
+
+<div class="become-strip">
+  <div>
+    <h3>Share your voice.<br><em>Earn doing what you love.</em></h3>
+    <p>Thousands of listeners are waiting for exactly what only you can give them. Go live in minutes.</p>
+  </div>
+  <a href="become-creator.html" class="btn-primary">Become a Creator</a>
+</div>
+
+<footer>
+  <div class="footer-logo">WhisperWave</div>
+  <ul class="footer-links">
+    <li><a href="#">About</a></li><li><a href="#">Creators</a></li><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 WhisperWave. All rights reserved.</div>
+</footer>
+
+<script>
+function setFilter(el) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
